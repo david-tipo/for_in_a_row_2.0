@@ -4,9 +4,16 @@ from game import *
 
 black_list = []
 
+
+def reset_bot():
+    """resets the black list of the bot"""
+    #TODO: make this bot a class and black list an attrebute not global var
+    global black_list
+    black_list = []
+
 def do_turn(game, gui) :
 
-    print("black list:", black_list)
+    print("check if i can win:")
     # I can win
     best_column = column_to_win(game, game.player)
     if best_column != -1: #there is a column to win
@@ -15,6 +22,8 @@ def do_turn(game, gui) :
         game.place(game.player, row, best_column, gui)
         return None
 
+    print("""-----------------------------------------------
+    check if enemy can win:""")
     # enemy can win
     enemy_best_column = column_to_win(game, game.enemy)
     if enemy_best_column != -1:  # there is a column for enemy to win
@@ -22,6 +31,8 @@ def do_turn(game, gui) :
         print("enemy best column: ", enemy_best_column, "row:", row)
         game.place(game.player, row, enemy_best_column, gui)
         return None
+
+    print("black list:", black_list)
 
     column = random.randint(0, 6)
     print('column', column)
@@ -41,7 +52,8 @@ def best_column(game):
     pass
 
 def column_to_win(game, player):
-    """:arg Game game :return: the column index to place piece and win, if there is none returns -1"""
+    """:arg Game game, String player :return: the column index to place piece and win, if there is none returns -1"""
+
     # win in column
     for column_index in range(NUMBER_OF_COLUMNS):
         pieces_count = 0
@@ -55,15 +67,13 @@ def column_to_win(game, player):
                 break
         three_in_one_column = pieces_count == 3
         there_is_space = game.board[0][column_index] == EMPTY_SLOT
-        if  three_in_one_column and there_is_space:
+        if three_in_one_column and there_is_space:
             print("win with column")
             return column_index
 
     # win in row
     for i in range(NUMBER_OF_ROWS):
         row_index = NUMBER_OF_ROWS - (i + 1)
-        # pieces_count = 0
-        # column_index = 0
         for column_index in range(NUMBER_OF_COLUMNS - 3):
             # print('win in row: current column checking: ', column_index)
             if __can_win_in_row(game.board[row_index][column_index : column_index + 4], player):
@@ -72,42 +82,46 @@ def column_to_win(game, player):
                 if game.can_place_piece(row_index, empty_cell_column):
                     return empty_cell_column
                 else:
-                    #TODO: make this black list thing work!
                     first_empty_row = game.available_slot(empty_cell_column)
                     print('first_empty_row', first_empty_row)
                     one_below = first_empty_row  - row_index == 1
+                    # TODO: make the append black list method like the sequence method
                     if one_below and not (first_empty_row, empty_cell_column) in black_list:
                         black_list.append((first_empty_row, empty_cell_column))
-        #     if game.board[row_index][column_index] == player:
-        #         pieces_count += 1
-        #     elif game.board[row_index][column_index] != EMPTY_SLOT:  # enemy piece
-        #         pieces_count = 0
-        #     if pieces_count == 3:  # can win
-        #         break
-        # print('column index:', column_index)
-        # if pieces_count == 3:
-        #     column_option1 =  column_index + 1
-        #     column_option2 = column_index - 3
-        #     if game.can_place_piece(row_index, column_option1):
-        #         print("win with row")
-        #         return column_option1
-        #     if game.can_place_piece(row_index, column_option2):
-        #         print("win with row")
-        #         return column_option2
 
-    #
-    """
-    for i in range(NUMBER_OF_ROWS):
+    # win in sequence
+    for i in range(NUMBER_OF_ROWS - 3):
+        row_index = NUMBER_OF_ROWS - (i + 1)
+        print("checking winner on sequence, row: ", row_index)
         for j in range(NUMBER_OF_COLUMNS):
-            up_left = game.legal_index(i - 3, j - 3) and __can_win_in_row(game.get_sequence(i, j, -1, -1), player)
-            if up_left:
-                
-            up_right = False
-            down_left = False
-            down_right = False
-            if
-
-    """
+            if game.legal_index(row_index - 3, j + 3):
+                up_right_sequence = game.get_sequence(row_index, j, -1, 1)
+                up_right = __can_win_in_row(up_right_sequence, player)
+                if up_right:
+                    final_row_index = row_index - up_right_sequence.index(EMPTY_SLOT)
+                    final_column_index = j + up_right_sequence.index(EMPTY_SLOT)
+                    print("uR final row index:", final_row_index, "final column index", final_column_index)
+                    if game.can_place_piece(final_row_index, final_column_index):
+                        return final_column_index
+                    else:
+                        not_in_BL = not (final_row_index + 1, final_column_index) in black_list
+                        if game.legal_index(final_row_index + 1, final_column_index) and not_in_BL:
+                            black_list.append((final_row_index + 1, final_column_index))
+                            print("black list :", (final_row_index + 1, final_column_index))
+            if game.legal_index(row_index - 3, j - 3):
+                up_left_sequence = game.get_sequence(row_index, j, -1, -1)
+                up_left = __can_win_in_row(up_left_sequence, player)
+                if up_left:
+                    final_row_index = row_index - up_left_sequence.index(EMPTY_SLOT)
+                    final_column_index = j - up_left_sequence.index(EMPTY_SLOT)
+                    print("uL final row index:", final_row_index, "final column index", final_column_index)
+                    if game.can_place_piece(final_row_index, final_column_index):
+                        return final_column_index
+                    else:
+                        not_in_BL = not (final_row_index + 1, final_column_index) in black_list
+                        if game.legal_index(final_row_index + 1, final_column_index) and not_in_BL:
+                            black_list.append((final_row_index + 1, final_column_index))
+                            print("black list :", (final_row_index + 1, final_column_index))
     return -1
 # def __can_win_in_sequence(game, player, row_direction, column_direction):
 #     if not game.legal_index()

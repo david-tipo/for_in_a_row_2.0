@@ -25,7 +25,7 @@ NUMBERS_COLOR = (200, 0, 0)
 pygame.font.init()
 NUMBER_FONT = pygame.font.SysFont('comicsans', 50)
 PlAYER_FONT = pygame.font.SysFont('comicsans', 40)
-WINNER_FONT = pygame.font.SysFont('comicsans', 200)
+WINNER_FONT = pygame.font.SysFont('comicsans', 150)
 TIE_FONT = pygame.font.SysFont('comicsans', 300)
 
 for i in range(NUMBERS):

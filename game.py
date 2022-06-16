@@ -147,7 +147,7 @@ class Game:
             if right_sequence:
                 if not self.legal_index(row_index + i, column_index + i) or self.board[row_index + i][column_index + i] != self.board[row_index][column_index]:
                     right_sequence = False
-                print('current: ' , self.board[row_index][column_index], "next one + 1: ",  self.board[row_index][column_index])
+                # print('current: ' , self.board[row_index][column_index], "next one + 1: ",  self.board[row_index][column_index])
 
             if left_sequence:
                 if not self.legal_index(row_index + i, column_index - i) or self.board[row_index + i][column_index - i] != self.board[row_index][column_index]:

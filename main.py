@@ -58,4 +58,5 @@ while run:
         break
     if input == 'play again':
         game.reset_board()
+        bot.reset_bot()
         game.print_board()

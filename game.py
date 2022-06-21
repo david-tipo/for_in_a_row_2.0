@@ -21,6 +21,10 @@ class Game:
 
     def legal_index(self, x, y):
         """returns true if two given integers are in index range"""
+        if x not in range(0, NUMBER_OF_ROWS):
+            return False
+        if y not in range(0, NUMBER_OF_COLUMNS):
+            return False
         try:
             self.board[x][y]
         except:

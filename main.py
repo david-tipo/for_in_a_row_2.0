@@ -1,5 +1,5 @@
 import gui
-import bot
+from bot import EasyBot
 from game import Game
 from time import sleep
 
@@ -8,6 +8,7 @@ from time import sleep
 
 #main loop
 game = Game()
+bot = EasyBot(game)
 run = True
 while run:
     gui1 = gui.Gui()

@@ -166,6 +166,6 @@ class EasyBot(Bot):
             row = game.available_slot(column)
             print('black list', self.black_list)
             in_black_list = (row, column) in self.black_list
-
+        #FIXME: when all the options left are in black_list, the code will be stuck on this enless loop
         print(f'row: {row} column: {column}')
         game.place(game.player, row, column, gui)
